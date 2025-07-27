@@ -1,47 +1,31 @@
 import streamlit as st
-from transformers import pipeline, set_seed
 
 st.set_page_config(page_title="REKA – Refleksi Kata", layout="centered")
+st.title("REKA – Ruang Refleksi Karakter")
 
-# Load Model
-@st.cache_resource
-def load_model():
-    generator = pipeline("text-generation", model="cahya/gpt2-small-indonesian")
-    set_seed(42)
-    return generator
+# Initialize chat history
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-generator = load_model()
+user_input = st.text_input("Ketik di sini...")
 
-# Fungsi membuat prompt reflektif berdasarkan tema
-def buat_prompt(tema, input_user):
-    tema = tema.lower()
-    return f"Buat afirmasi positif dan reflektif bertema {tema} untuk seseorang yang berkata: \"{input_user}\".\nAfirmasi:"
-
-# UI Header
-st.markdown("""
-<div style='text-align: center; padding: 2rem; background-color: #f5f1eb; border-radius: 15px;'>
-    <h1 style='color: #5d473a;'>REKA 🤍</h1>
-    <h3 style='color: #7a6655;'>Refleksi Karakter dan Kata</h3>
-    <p style='color: #5d473a; font-size: 1.2rem;'>
-        “Tempat di mana setiap kata menjadi cermin kecil untuk mengenali diri sendiri.”
-    </p>
-    <p style='margin-top: 2rem; font-size: 1rem; color: #7a6655;'>Oleh Ardina Latif</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("---")
-
-# Tema dan Input
-tema = st.selectbox("Pilih Tema Refleksi:", ["Motivasi", "Emosi", "Spiritual", "Netral"])
-user_input = st.text_area("Tuliskan isi hatimu atau cerita singkatmu...")
-
-if st.button("Refleksikan 🌿"):
-    if user_input.strip() != "":
-        prompt = buat_prompt(tema, user_input)
-        output = generator(prompt, max_length=100, num_return_sequences=1)[0]["generated_text"]
-        afirmasi = output.replace(prompt, "").strip()
-
-        st.markdown("### ✨ Afirmasi untukmu:")
-        st.success(afirmasi)
+if user_input:
+    st.session_state.chat_history.append(("Kamu", user_input))
+    
+    # Respon sederhana berbasis keyword
+    msg = user_input.lower()
+    if "gak bisa" in msg or "bingung" in msg:
+        balasan = "Aku paham kamu merasa kesulitan. Coba jelaskan lebih detail, ya."
+    elif "capek" in msg:
+        balasan = "Istirahat sejenak itu sama pentingnya dengan berusaha. Kamu boleh break dulu."
     else:
-        st.warning("Coba tuliskan sesuatu dulu, ya 🌱")
+        balasan = "Terima kasih sudah berbagi. Kamu tidak sendiri dan aku di sini 😊"
+
+    st.session_state.chat_history.append(("REKA", balasan))
+
+# Tampilkan riwayat chat
+for sender, msg in st.session_state.chat_history[::-1]:
+    if sender == "Kamu":
+        st.markdown(f"**🧍 {sender}:** {msg}")
+    else:
+        st.markdown(f"**🤖 {sender}:** {msg}")
