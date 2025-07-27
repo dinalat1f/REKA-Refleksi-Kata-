@@ -13,7 +13,7 @@ if user_input:
     msg = user_input.lower()
 
     # Rule-based responses
-    if any(k in msg for k in ["hai", "halo", "hei", "hi"]):
+    if any(k in msg for k in ["hai", "halo", "hei", "hi" ''assalamualaikum'']):
         balasan = "Hai! Senang ngobrol sama kamu 😊 Apa kabar hari ini?"
     elif any(k in msg for k in ["insecure", "gak cukup", "ragu", "tidak percaya diri"]):
         balasan = "Aku paham kamu merasa tidak percaya diri. Coba ingat kembali hal kecil yang sudah kamu capai."
