@@ -1,9 +1,9 @@
 import streamlit as st
 
-st.set_page_config(page_title="REKA Chat", layout="wide")
+st.set_page_config(page_title="REKA Chat Sederhana", layout="wide")
 st.title("REKA – Ruang Refleksi Karakter")
 
-# Chat Input
+# Riwayat chat
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
@@ -11,18 +11,25 @@ user_input = st.text_input("Ketik di sini...")
 
 if user_input:
     st.session_state.chat_history.append(("Kamu", user_input))
-    
-    # Jawaban sederhana (simulasi)
-    if "insecure" in user_input.lower():
-        balasan = "Ingat ya, kamu berharga bukan karena pencapaianmu, tapi karena kamu adalah kamu."
+    msg = user_input.lower()
+
+    # Respon berdasarkan kata kunci
+    if any(k in msg for k in ["insecure", "gak cukup", "ragu", "tidak percaya diri"]):
+        balasan = "Saya paham kamu merasa tidak percaya diri. Coba ingat kembali hal kecil yang sudah kamu capai."
+    elif any(k in msg for k in ["bingung", "gimana", "tidak tahu", "bingung"]):
+        balasan = "Jika kamu merasa bingung, coba tuliskan satu hal yang ingin kamu ketahui lebih jelas."
+    elif any(k in msg for k in ["capek", "lelahan", "stress"]):
+        balasan = "Istirahat itu penting. Apa yang bisa membuatmu rileks sekarang?"
+    elif any(k in msg for k in ["sedih", "galau", "putus asa"]):
+        balasan = "Sedih itu bagian dari proses. Kamu tidak sendiri. Ceritakan jika kamu mau."
     else:
-        balasan = "Terima kasih sudah bercerita. Kamu tidak sendiri."
+        balasan = "Terima kasih sudah berbagi. Ingat: kamu penting, kamu tidak sendiri."
 
     st.session_state.chat_history.append(("REKA", balasan))
 
-# Tampilkan riwayat chat
-for sender, msg in st.session_state.chat_history:
+# Tampilkan chat history
+for sender, msg in reversed(st.session_state.chat_history):
     if sender == "Kamu":
-        st.markdown(f"🧍 {sender}:** {msg}")
+        st.markdown(f"**🧍 {sender}:** {msg}")
     else:
-        st.markdown(f"🤖 {sender}:** {msg}")
+        st.markdown(f"**🤖 {sender}:** {msg}")
